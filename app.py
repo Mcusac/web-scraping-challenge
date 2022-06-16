@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect
-import pymongo
-import mission_to_mars
+import pymongo as PyMongo
+import scrape_to_mars
 
 # Create an instance of Flask
 app = Flask(__name__)
@@ -14,10 +14,10 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/")
 def home():
 
     # Find one record of data from the mongo database
-    destination_data = mongo.db.collection.find_one()
+    mars = mongo.db.collection.find_one()
 
     # Return template and data
-    return render_template("index.html", vacation=destination_data)
+    return render_template("index.html", mars=mars)
 
 
 # Route that will trigger the scrape function
@@ -25,10 +25,10 @@ def home():
 def scrape():
 
     # Run the scrape function
-    costa_data = scrape_costa.scrape_info()
+    mars_data = scrape_to_mars.scrape_info()
 
     # Insert the record
-    mongo.db.collection.update_one({}, {"$set": costa_data}, upsert=True)
+    mongo.db.collection.update_one({}, {"$set": mars_data}, upsert=True)
 
     # Redirect back to home page
     return redirect("/")
